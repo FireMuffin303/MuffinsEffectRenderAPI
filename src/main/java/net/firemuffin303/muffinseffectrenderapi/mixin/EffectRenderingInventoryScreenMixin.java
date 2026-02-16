@@ -219,7 +219,7 @@ public class EffectRenderingInventoryScreenMixin {
         return original;
     }
 
-    @ModifyVariable(method = "renderEffects", at = @At(value = "STORE",ordinal = 0), name = "n")
+    @ModifyExpressionValue(method = "renderEffects", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen;topPos:I"))
     public int muffins$modifyTooltipPos(int value){
         boolean isRenderTop = false;
         if(MuffinsERAClient.IS_EMI_INSTALLED){
