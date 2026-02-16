@@ -2,13 +2,17 @@
   "schemaVersion": 1,
   "id": "muffins_era",
   "version": "${version}",
-  "name": "MuffinsEffectRenderAPI",
-  "description": "",
+  "name": "Muffin's Effect Render API",
+  "description": "A library mod for custom effect indicator.",
   "authors": ["FireMuffin303"],
-  "contact": {},
+  "contact": {
+    "homepage": "https://github.com/FireMuffin303/MuffinsEffectRenderAPI",
+    "sources": "https://github.com/FireMuffin303/MuffinsEffectRenderAPI",
+    "issues": "https://github.com/FireMuffin303/MuffinsEffectRenderAPI/issues"
+  },
   "license": "MIT",
-  "icon": "assets/muffinseffectrenderapi/icon.png",
-  "environment": "*",
+  "icon": "assets/muffins_era/textures/icon.png",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "net.firemuffin303.muffinseffectrenderapi.client.MuffinsERAClient"
