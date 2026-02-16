@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "muffins_era",
+  "version": "${version}",
+  "name": "MuffinsEffectRenderAPI",
+  "description": "",
+  "authors": ["FireMuffin303"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/muffinseffectrenderapi/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.firemuffin303.muffinseffectrenderapi.client.MuffinsERAClient"
+    ],
+    "jei_mod_plugin": [
+      "net.firemuffin303.muffinseffectrenderapi.integrations.JEIPlugin"
+    ]
+  },
+  "mixins": [
+    "muffins_era.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
