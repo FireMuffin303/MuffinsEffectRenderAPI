@@ -10,15 +10,16 @@ import net.firemuffin303.muffinseffectrenderapi.api.CustomEffectRegistry;
 import net.firemuffin303.muffinseffectrenderapi.common.CustomEffectRenderer;
 import net.firemuffin303.muffinseffectrenderapi.integrations.EMIIntegrations;
 import net.firemuffin303.muffinseffectrenderapi.integrations.JEIPlugin;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Collection;
@@ -34,6 +35,7 @@ public class EffectRenderingInventoryScreenMixin {
     public void muffins$specialEffectRender(GuiGraphics guiGraphics, int mouseX, int mouseY, CallbackInfo ci,
                                             @Local Collection<MobEffectInstance> effects,@Local(ordinal = 2) int xPos,@Local(ordinal = 3) int screenWidth){
         AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>)(Object)this;
+        LocalPlayer localPlayer = Minecraft.getInstance().player;
         int topPos = ((AbstractContainerScreenAccessor)screen).getTopPos();
 
         int yPos = topPos;
@@ -45,7 +47,7 @@ public class EffectRenderingInventoryScreenMixin {
             wide = JEIPlugin.checkOverlay(wide);
         }
 
-        Collection<CustomEffectRenderer> clist = CustomEffectRegistry.getEffects().stream().filter(CustomEffectRenderer::shouldRender).collect(Collectors.toSet());
+        Collection<CustomEffectRenderer> clist = CustomEffectRegistry.getEffects().stream().filter(customEffectRenderer -> customEffectRenderer.shouldRender(localPlayer)).collect(Collectors.toSet());
 
         if(MuffinsERAClient.IS_EMI_INSTALLED){
             clist = EMIIntegrations.shouldHidden(clist);
@@ -75,22 +77,20 @@ public class EffectRenderingInventoryScreenMixin {
             if(!clist.isEmpty()){
                 for(CustomEffectRenderer customEffectRenderer: clist){
                     if(wide){
-                        EffectRendererImpl.specialEffectRenderBackground(guiGraphics,xPos,yPos,customEffectRenderer.backgroundTextureWide());
+                        EffectRendererImpl.specialEffectRenderWideBackground(guiGraphics,xPos,yPos,customEffectRenderer.color(localPlayer));
                     }else{
-                        EffectRendererImpl.specialEffectRenderBackground(guiGraphics,xPos,yPos,customEffectRenderer.backgroundTextureShort(),0,32,32,32);
+                        EffectRendererImpl.specialEffectRenderShortBackground(guiGraphics,xPos,yPos,customEffectRenderer.color(localPlayer));
 
                     }
-
-                    customEffectRenderer.renderBG(guiGraphics,xPos,yPos,wide);
-                    EffectRendererImpl.specialEffectRenderIcon(guiGraphics,xPos,yPos,customEffectRenderer.iconTexture(),wide);
+                    EffectRendererImpl.specialEffectRenderIcon(guiGraphics,xPos,yPos,customEffectRenderer.iconTexture(localPlayer),wide);
                     if(wide){
-                        EffectRendererImpl.specialEffectRenderLabel(guiGraphics,xPos,yPos,customEffectRenderer.getName());
-                        EffectRendererImpl.specialEffectRenderDetail(guiGraphics,xPos,yPos,customEffectRenderer);
+                        EffectRendererImpl.specialEffectRenderLabel(guiGraphics,xPos,yPos,customEffectRenderer.getName(localPlayer));
+                        EffectRendererImpl.specialEffectRenderDetail(guiGraphics,xPos,yPos,customEffectRenderer,localPlayer);
                     }
 
                     if(mouseX >= xPos && mouseX <= xPos + 33){
                         if (mouseY >= yPos && mouseY <= yPos + 32) {
-                            EffectRendererImpl.specialEffectRenderTooltips(guiGraphics,mouseX,mouseY,customEffectRenderer);
+                            EffectRendererImpl.specialEffectRenderTooltips(guiGraphics,mouseX,mouseY,customEffectRenderer,localPlayer);
                         }
                     }
 
@@ -111,17 +111,15 @@ public class EffectRenderingInventoryScreenMixin {
             if(!clist.isEmpty()){
                 for(CustomEffectRenderer customEffectRenderer : clist){
                     if(wide){
-                        EffectRendererImpl.specialEffectRenderBackground(guiGraphics,xPos,yPos,customEffectRenderer.backgroundTextureWide());
+                        EffectRendererImpl.specialEffectRenderWideBackground(guiGraphics,xPos,yPos,customEffectRenderer.color(localPlayer));
                     }else{
-                        EffectRendererImpl.specialEffectRenderBackground(guiGraphics,xPos,yPos,customEffectRenderer.backgroundTextureShort(),0,32,32,32);
+                        EffectRendererImpl.specialEffectRenderShortBackground(guiGraphics,xPos,yPos,customEffectRenderer.color(localPlayer));
                     }
 
-
-                    customEffectRenderer.renderBG(guiGraphics,xPos,yPos,wide);
-                    EffectRendererImpl.specialEffectRenderIcon(guiGraphics,xPos,yPos,customEffectRenderer.iconTexture(),wide);
+                    EffectRendererImpl.specialEffectRenderIcon(guiGraphics,xPos,yPos,customEffectRenderer.iconTexture(localPlayer),wide);
                     if(wide){
-                        EffectRendererImpl.specialEffectRenderLabel(guiGraphics,xPos,yPos,customEffectRenderer.getName());
-                        EffectRendererImpl.specialEffectRenderDetail(guiGraphics,xPos,yPos,customEffectRenderer);
+                        EffectRendererImpl.specialEffectRenderLabel(guiGraphics,xPos,yPos,customEffectRenderer.getName(localPlayer));
+                        EffectRendererImpl.specialEffectRenderDetail(guiGraphics,xPos,yPos,customEffectRenderer,localPlayer);
                     }
                     yPos += this.toastHeight;
                 }
@@ -133,7 +131,7 @@ public class EffectRenderingInventoryScreenMixin {
                     if(mouseX >= xPos && mouseX <= xPos + 33){
                         for(CustomEffectRenderer customEffectRenderer : clist){
                             if (mouseY >= n && mouseY <= n + this.toastHeight) {
-                                EffectRendererImpl.specialEffectRenderTooltips(guiGraphics,mouseX,mouseY,customEffectRenderer);
+                                EffectRendererImpl.specialEffectRenderTooltips(guiGraphics,mouseX,mouseY,customEffectRenderer,localPlayer);
                             }
 
                             n += this.toastHeight;

@@ -27,7 +27,7 @@ public abstract class GuiMixin {
 
     @Inject(method = "renderEffects",at = @At(value = "HEAD"))
     public void muffins$renderSpecialEffect(GuiGraphics guiGraphics, CallbackInfo ci){
-        Collection<CustomEffectRenderer> clist = CustomEffectRegistry.getEffects().stream().filter(CustomEffectRenderer::shouldRender).collect(Collectors.toSet());
+        Collection<CustomEffectRenderer> clist = CustomEffectRegistry.getEffects().stream().filter(customEffectRenderer -> customEffectRenderer.shouldRender(minecraft.player)).collect(Collectors.toSet());
 
         if(!clist.isEmpty() && !(this.minecraft.screen instanceof EffectRenderingInventoryScreen<?> effectRenderingInventoryScreen && effectRenderingInventoryScreen.canSeeEffects()) ){
             RenderSystem.enableBlend();
@@ -37,7 +37,7 @@ public abstract class GuiMixin {
                 int xPos = this.screenWidth;
                 xOffset++;
                 xPos -= 25 * xOffset;
-                EffectRendererImpl.specialEffectRenderHUD(guiGraphics,xPos,yPos,customEffectRenderer);
+                EffectRendererImpl.specialEffectRenderHUDBackground(guiGraphics,xPos,yPos,customEffectRenderer.color(minecraft.player),customEffectRenderer.iconTexture(minecraft.player));
             }
         }
     }

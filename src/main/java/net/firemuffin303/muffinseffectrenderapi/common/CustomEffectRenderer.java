@@ -1,32 +1,27 @@
 package net.firemuffin303.muffinseffectrenderapi.common;
 
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public interface CustomEffectRenderer {
 
-    boolean shouldRender();
+    boolean shouldRender(LocalPlayer player);
 
-    Component getName();
+    Component getName(LocalPlayer player);
 
-    Component getDetail();
+    Component getDetail(LocalPlayer player);
 
-    ResourceLocation backgroundTextureWide();
+    ResourceLocation backgroundTextureWide(LocalPlayer player);
 
-    ResourceLocation backgroundTextureShort();
+    ResourceLocation backgroundTextureShort(LocalPlayer player);
 
-    ResourceLocation backgroundTextureHUD();
+    ResourceLocation backgroundTextureHUD(LocalPlayer player);
 
-    ResourceLocation iconTexture();
+    ResourceLocation iconTexture(LocalPlayer player);
 
-    void renderTooltip();
-
-    void renderBG(GuiGraphics guiGraphics,int x,int y,boolean wide);
-
-    void renderIcon();
-
-    void renderDetail(Font font, GuiGraphics guiGraphics, int x, int y, int color);
+    default int color(LocalPlayer player){
+        return 0xFFFFFF;
+    }
 
 }
